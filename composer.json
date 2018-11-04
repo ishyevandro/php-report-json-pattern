@@ -1,0 +1,14 @@
+{
+    "name": "evandro/php-report-json-pattern",
+    "description": "Simple test using json-report-pattern",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Evandro Medeiros",
+            "email": "ishyevandro@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.5"
+    }
+}
