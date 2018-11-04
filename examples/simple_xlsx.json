@@ -3,7 +3,7 @@
   "config": {},
   "sheets": [
     {
-      "name": "sheet 1",
+      "name": "all data",
       "config": {
         "fields": [
           "field_1",
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "name": "sheet 2",
+      "name": "analytics",
       "config": {
         "fields": [
           "field_1",
@@ -34,10 +34,10 @@
           "field_3"
         ],
         "first_column": "D",
-        "header_line": 1
+        "header_line": 4
       },
       "data": [
-        ["This will", "start in", ""]
+        ["This will", "start in", "D4"]
       ]
     }
   ]

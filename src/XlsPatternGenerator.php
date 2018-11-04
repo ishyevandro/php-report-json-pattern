@@ -68,7 +68,7 @@ class XlsPatternGenerator
     protected function processSheets(): bool
     {
         foreach ($this->json["sheets"] as $key => $sheet) {
-            $myWorkSheet = new Worksheet($this->spreedsheet, 'My Data');
+            $myWorkSheet = new Worksheet($this->spreedsheet, $sheet['name']);
             try {
                 $this->currentSheet = $this->spreedsheet->addSheet($myWorkSheet, $key);
             } catch (\Exception $e) {
