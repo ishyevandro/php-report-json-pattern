@@ -2,7 +2,7 @@
 
 namespace IshyEvandro\XlsPatternGenerator;
 
-use IshyEvandro\XlsPatternGenerator\Configs\WorksheetConfig;
+use IshyEvandro\XlsPatternGenerator\Processors\WorksheetConfig;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;

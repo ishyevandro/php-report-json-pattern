@@ -1,6 +1,6 @@
 <?php
 
-namespace IshyEvandro\XlsPatternGenerator\Configs;
+namespace IshyEvandro\XlsPatternGenerator\Processors;
 
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 
@@ -8,7 +8,7 @@ use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
  * Class WorksheetConfig
  * @package IshyEvandro\XlsPatternGenerator\Configs
  */
-class WorksheetConfig
+class WorksheetProcessor
 {
     protected $expectConfigFields = [
         "fields",
