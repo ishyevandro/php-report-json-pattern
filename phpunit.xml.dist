@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php"
+         backupGlobals="true"
+         colors="true"
+         syntaxCheck="true"
+         disallowTestOutput="true">
+    <php>
+        <ini name="memory_limit" value="2048M"/>
+    </php>
+    <testsuite name="PHP Report json pattern Unit Test Suite">
+        <directory suffix="Test.php">./tests</directory>
+    </testsuite>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
