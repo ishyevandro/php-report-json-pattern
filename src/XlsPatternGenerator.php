@@ -2,10 +2,11 @@
 
 namespace IshyEvandro\XlsPatternGenerator;
 
-use IshyEvandro\XlsPatternGenerator\Processors\WorksheetConfig;
+use IshyEvandro\XlsPatternGenerator\Processors\WorksheetProcessor;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class XlsPatternGenerator
 {
@@ -20,7 +21,7 @@ class XlsPatternGenerator
     protected $currentSheet;
 
     /**
-     * @var WorksheetConfig
+     * @var WorksheetProcessor
      */
     protected $currentWorksheetConfig;
 
@@ -38,14 +39,22 @@ class XlsPatternGenerator
      * @return bool
      * @throws XlsPatternGeneratorException
      */
-    public function proccess(): bool
+    public function process(): bool
     {
         $this->spreedSheetConfig();
-        $this->proccessSheets();
+        $this->processSheets();
         return true;
     }
 
+    public function save($path)
+    {
+        $writer = new Xls($this->spreedsheet);
+        $writer->save($path);
+    }
+
     /**
+     * Reserved
+     *
      * @return XlsPatternGenerator
      */
     protected function spreedSheetConfig(): self
@@ -56,7 +65,7 @@ class XlsPatternGenerator
     /**
      * @throws XlsPatternGeneratorException
      */
-    protected function proccessSheets(): bool
+    protected function processSheets(): bool
     {
         foreach ($this->json["sheets"] as $key => $sheet) {
             $myWorkSheet = new Worksheet($this->spreedsheet, 'My Data');
@@ -65,7 +74,8 @@ class XlsPatternGenerator
             } catch (\Exception $e) {
                 throw new XlsPatternGeneratorException($e->getMessage(), $e->getCode(), $e);
             }
-            $this->configCurrentSheet($sheet);
+            $this->configCurrentSheet($sheet)
+                ->processWorkSheet($sheet);
         }
 
         return true;
@@ -77,7 +87,15 @@ class XlsPatternGenerator
      */
     protected function configCurrentSheet(&$sheet): self
     {
-        $this->currentWorksheetConfig = new WorksheetConfig($sheet["config"]);
+        $this->currentWorksheetConfig = new WorksheetProcessor($sheet["config"]);
         return $this;
+    }
+
+    protected function processWorkSheet(&$sheet)
+    {
+        return $this->currentWorksheetConfig->process(
+            $this->currentSheet,
+            $sheet
+        );
     }
 }
