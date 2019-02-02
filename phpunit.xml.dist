@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php"
          backupGlobals="true"
-         colors="true"
-         syntaxCheck="true"
-         disallowTestOutput="true">
+         colors="true">
     <php>
         <ini name="memory_limit" value="2048M"/>
     </php>

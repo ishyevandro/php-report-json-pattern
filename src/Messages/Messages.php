@@ -7,8 +7,8 @@ use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 
 class Messages
 {
-    const CONFIG_MISSING_FIELD = 'cmf';
-    const MESSAGES = [
+    public const CONFIG_MISSING_FIELD = 'cmf';
+    public const MESSAGES = [
         self::CONFIG_MISSING_FIELD => 'Missing config. {field}'
     ];
 
@@ -20,7 +20,7 @@ class Messages
      */
     public static function getMessage(string $const, $values = []): string
     {
-        if (!array_key_exists($const, self::MESSAGES)) {
+        if (!\array_key_exists($const, self::MESSAGES)) {
             throw new XlsPatternGeneratorException("Message {$const} not found.");
         }
 
