@@ -7,9 +7,9 @@ use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 
 class Messages
 {
-    const CONFIG_MISS_FIELD = 'ce';
+    const CONFIG_MISSING_FIELD = 'cmf';
     const MESSAGES = [
-        self::CONFIG_MISS_FIELD => 'Missing config. {ce}'
+        self::CONFIG_MISSING_FIELD => 'Missing config. {field}'
     ];
 
     /**

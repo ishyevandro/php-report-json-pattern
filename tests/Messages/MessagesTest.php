@@ -4,7 +4,7 @@ use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 use PHPUnit\Framework\TestCase;
 
-class WorksheetConfigTest extends TestCase
+class MessagesTest extends TestCase
 {
     public function testMessageNotFound()
     {
@@ -16,6 +16,18 @@ class WorksheetConfigTest extends TestCase
 
     public function testGetMessageWithoutParameter()
     {
-        $this->assertEquals(Messages::MESSAGES[Messages::CONFIG_MISS_FIELD], Messages::getMessage(Messages::CONFIG_MISS_FIELD));
+        $this->assertEquals(Messages::MESSAGES[Messages::CONFIG_MISSING_FIELD], Messages::getMessage(Messages::CONFIG_MISSING_FIELD));
+    }
+
+    public function testGetMessageWithParameter()
+    {
+        $field = "test";
+        $expected = str_replace("{field}", $field, Messages::MESSAGES[Messages::CONFIG_MISSING_FIELD]);
+        $this->assertEquals(
+            $expected,
+            Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
+                '{field}' => $field
+            ])
+        );
     }
 }
