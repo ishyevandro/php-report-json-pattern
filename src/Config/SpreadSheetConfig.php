@@ -7,13 +7,16 @@ use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
 class SpreadSheetConfig extends AbstractConfig
 {
-    protected $expectedConfig = [
-        'fields' => [],
-        'first_column' => '',
-        'header_line_position' => ''
-    ];
-
-    protected $jsonPathPrefix = 'sheets.*.config.';
+    public function __construct(array $data)
+    {
+        $this->expectedConfig = [
+            'fields' => [],
+            'first_column' => '',
+            'header_line_position' => ''
+        ];
+        $this->jsonPathPrefix = 'sheets.*.config.';
+        parent::__construct($data);
+    }
 
     public function validate(): bool
     {
