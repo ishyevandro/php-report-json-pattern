@@ -1,0 +1,15 @@
+version: '2'
+services:
+  report_json_php:
+    container_name: report-json-php
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    privileged: true
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    tty: true
