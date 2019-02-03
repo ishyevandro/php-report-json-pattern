@@ -7,6 +7,7 @@ use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
 trait CheckKeysTrait
 {
+    public $checkKeyError = '';
     /**
      * @param $expectedConfig
      * @param $passedConfig
@@ -18,7 +19,7 @@ trait CheckKeysTrait
     {
         foreach ($expectedConfig as $config => $parameters) {
             if (!\array_key_exists($config, $passedConfig)) {
-                $this->errorMessage = Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
+                $this->checkKeyError = Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
                     '{field}' => $jsonPathPrefix . $config
                 ]);
                 return false;
@@ -26,5 +27,13 @@ trait CheckKeysTrait
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKeyError(): string
+    {
+        return $this->checkKeyError;
     }
 }

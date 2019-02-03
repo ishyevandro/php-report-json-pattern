@@ -29,12 +29,18 @@ class FieldConfig extends AbstractConfig implements
 
     public function validate(): bool
     {
+        $return = true;
         $checkKeys = $this->checkKeys($this->expectedConfig, $this->config, $this->jsonPathPrefix);
-        if ($checkKeys === false || $this->checkType() === false) {
-            return false;
+        if ($checkKeys === false) {
+            $this->setErrorMessage($this->getKeyError());
+            $return = false;
         }
 
-        return true;
+        if ($return === true && $this->checkType() === false) {
+            $return = false;
+        }
+
+        return $return;
     }
 
     public function getRowKey(): string
@@ -51,13 +57,15 @@ class FieldConfig extends AbstractConfig implements
     {
         $expected = explode('|', $this->expectedConfig['type']);
         if (\in_array($this->config['type'], $expected, true) === false) {
-            $this->setErrorMessage(Messages::getMessage(
-                Messages::CONFIG_FIELD_TYPE_ERROR,
-                [
-                    '{wrong}' => $this->config['type'],
-                    '{types}' => self::ACCEPTABLE_TYPES
-                ]
-            ));
+            $this->setErrorMessage(
+                Messages::getMessage(
+                    Messages::CONFIG_FIELD_TYPE_ERROR,
+                    [
+                        '{wrong}' => $this->config['type'],
+                        '{types}' => self::ACCEPTABLE_TYPES
+                    ]
+                )
+            );
             return false;
         }
 

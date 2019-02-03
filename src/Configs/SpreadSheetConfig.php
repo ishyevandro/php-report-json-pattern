@@ -28,6 +28,7 @@ class SpreadSheetConfig extends AbstractConfig
     public function validate(): bool
     {
         if ($this->checkKeys($this->expectedConfig, $this->config, $this->jsonPathPrefix) === false) {
+            $this->setErrorMessage($this->getKeyError());
             return false;
         }
 
