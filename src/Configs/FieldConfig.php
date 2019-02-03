@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace IshyEvandro\XlsPatternGenerator\Configs;
 
-use IshyEvandro\XlsPatternGenerator\Interfaces\IFieldGetPosition;
-use IshyEvandro\XlsPatternGenerator\Interfaces\IFieldGetRowKey;
+use IshyEvandro\XlsPatternGenerator\Interfaces\{
+    IFieldGetPosition,
+    IFieldGetRowKey
+};
 use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
-class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGetRowKey
+class FieldConfig extends AbstractConfig implements
+    IFieldGetPosition,
+    IFieldGetRowKey
 {
     public const ACCEPTABLE_TYPES = 'string|number';
 
@@ -25,11 +29,7 @@ class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGet
 
     public function validate(): bool
     {
-        if ($this->checkKeys() === false) {
-            return false;
-        }
-
-        if ($this->checkType() === false) {
+        if ($this->checkKeys() === false || $this->checkType() === false) {
             return false;
         }
 
