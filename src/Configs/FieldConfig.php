@@ -29,7 +29,8 @@ class FieldConfig extends AbstractConfig implements
 
     public function validate(): bool
     {
-        if ($this->checkKeys() === false || $this->checkType() === false) {
+        $checkKeys = $this->checkKeys($this->expectedConfig, $this->config, $this->jsonPathPrefix);
+        if ($checkKeys === false || $this->checkType() === false) {
             return false;
         }
 
@@ -50,13 +51,13 @@ class FieldConfig extends AbstractConfig implements
     {
         $expected = explode('|', $this->expectedConfig['type']);
         if (\in_array($this->config['type'], $expected, true) === false) {
-            $this->errorMessage = Messages::getMessage(
+            $this->setErrorMessage(Messages::getMessage(
                 Messages::CONFIG_FIELD_TYPE_ERROR,
                 [
                     '{wrong}' => $this->config['type'],
                     '{types}' => self::ACCEPTABLE_TYPES
                 ]
-            );
+            ));
             return false;
         }
 

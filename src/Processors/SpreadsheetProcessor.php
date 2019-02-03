@@ -4,6 +4,7 @@ namespace IshyEvandro\XlsPatternGenerator\Processors;
 
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 /**
  * Class WorksheetConfig
  * @package IshyEvandro\XlsPatternGenerator\Configs

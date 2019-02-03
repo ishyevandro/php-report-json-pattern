@@ -1,14 +1,14 @@
 <?php
 
-use IshyEvandro\XlsPatternGenerator\Processors\WorksheetProcessor;
+use IshyEvandro\XlsPatternGenerator\Processors\SpreadsheetProcessor;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 use PHPUnit\Framework\TestCase;
 
-class WorksheetConfigTest extends TestCase
+class WorksheetConfigWIP extends TestCase
 {
     public function testConstructWithCorrectJsonShouldNotThrowException()
     {
-        new WorksheetProcessor($this->config());
+        new SpreadsheetProcessor($this->config());
         $this->assertTrue(true);
     }
 
@@ -17,7 +17,7 @@ class WorksheetConfigTest extends TestCase
         $this->expectException(XlsPatternGeneratorException::class);
         $json = $this->config();
         unset($json['fields']);
-        new WorksheetProcessor($json);
+        new SpreadsheetProcessor($json);
     }
 
     public function testConstructWithJsonWithoutFirstColumnShouldThrownException()
@@ -25,7 +25,7 @@ class WorksheetConfigTest extends TestCase
         $this->expectException(XlsPatternGeneratorException::class);
         $json = $this->config();
         unset($json['first_column']);
-        new WorksheetProcessor($json);
+        new SpreadsheetProcessor($json);
     }
 
     public function testConstructWithJsonWithoutHeaderLineShouldThrownException()
@@ -33,7 +33,7 @@ class WorksheetConfigTest extends TestCase
         $this->expectException(XlsPatternGeneratorException::class);
         $json = $this->config();
         unset($json['header_line']);
-        new WorksheetProcessor($json);
+        new SpreadsheetProcessor($json);
     }
 
     protected function config()

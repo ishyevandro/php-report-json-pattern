@@ -3,11 +3,19 @@ declare(strict_types=1);
 
 namespace IshyEvandro\XlsPatternGenerator\Configs;
 
-use IshyEvandro\XlsPatternGenerator\Interfaces\IConfigValidate;
-use IshyEvandro\XlsPatternGenerator\Messages\Messages;
+use IshyEvandro\XlsPatternGenerator\Interfaces\{
+    ICheckKeys,
+    IConfigValidate,
+    IErrorMessage
+};
+use IshyEvandro\XlsPatternGenerator\Traits\{
+    CheckKeysTrait,
+    ErrorMessageTrait
+};
 
-abstract class AbstractConfig implements IConfigValidate
+abstract class AbstractConfig implements IConfigValidate, IErrorMessage, ICheckKeys
 {
+    use ErrorMessageTrait, CheckKeysTrait;
     /**
      * @var array
      */
@@ -17,11 +25,6 @@ abstract class AbstractConfig implements IConfigValidate
      */
     protected $expectedConfig = [];
 
-    /**
-     * @var string
-     */
-    protected $errorMessage = '';
-
     protected $jsonPathPrefix = '';
     /**
      * spreadSheetConfig constructor.
@@ -30,32 +33,5 @@ abstract class AbstractConfig implements IConfigValidate
     public function __construct(array &$data)
     {
         $this->config = $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage(): string
-    {
-        return $this->errorMessage;
-    }
-
-
-    /**
-     * @return bool
-     * @throws \IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException
-     */
-    protected function checkKeys(): bool
-    {
-        foreach ($this->expectedConfig as $config => $parameters) {
-            if (!\array_key_exists($config, $this->config)) {
-                $this->errorMessage = Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
-                    '{field}' => $this->jsonPathPrefix . $config
-                ]);
-                return false;
-            }
-        }
-
-        return true;
     }
 }

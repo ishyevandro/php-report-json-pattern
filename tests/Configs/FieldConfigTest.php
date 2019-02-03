@@ -17,7 +17,7 @@ class FieldConfigTest extends TestCase
         $this->assertFalse($class->validate());
         $this->assertEquals(Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
             '{field}' => 'sheets.*.config.fields.*.type'
-        ]), $class->getMessage());
+        ]), $class->getErrorMessage());
     }
 
     public function testValidateShouldReturnTrueWithCorrectParameters(): void
@@ -55,7 +55,7 @@ class FieldConfigTest extends TestCase
                     '{types}'  => FieldConfig::ACCEPTABLE_TYPES
                 ]
             ),
-            $class->getMessage()
+            $class->getErrorMessage()
         );
     }
 

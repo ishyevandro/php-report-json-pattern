@@ -46,7 +46,7 @@ class SpreadSheetConfigTest extends TestCase
         $this->assertFalse($class->validate());
         $this->assertEquals(Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
             '{field}' => 'sheets.*.config.fields.*.type'
-        ]), $class->getMessage());
+        ]), $class->getErrorMessage());
     }
 
     protected function getClass($data): SpreadSheetConfig
