@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace IshyEvandro\XlsPatternGenerator\Interfaces;
 
-interface IFieldGetPosition
+interface IFieldGetColumn
 {
-    public function getPosition(): string;
+    public function getColumn(): string;
 }

@@ -34,11 +34,11 @@ class FieldConfigTest extends TestCase
         $this->assertEquals('name', $class->getRowKey());
     }
 
-    public function testGetPosition(): void
+    public function testGetColumn(): void
     {
         $class = $this->getClass($this->getPayload());
 
-        $this->assertEquals('A', $class->getPosition());
+        $this->assertEquals('A', $class->getColumn());
     }
 
     public function testValidateShouldReturnFalseWhenTypeIsWrong(): void
@@ -59,6 +59,12 @@ class FieldConfigTest extends TestCase
         );
     }
 
+    public function testGetFieldName(): void
+    {
+        $class = $this->getClass($this->getPayload());
+        $this->assertEquals('TestingName', $class->getFieldName());
+    }
+
     protected function getClass($data): FieldConfig
     {
         return new FieldConfig($data);
@@ -70,8 +76,8 @@ class FieldConfigTest extends TestCase
     protected function getPayload(): array
     {
         return [
-            'name' => '',
-            'position' => 'A',
+            'name' => 'TestingName',
+            'column' => 'A',
             'type' => 'string',
             'json_row_key' => 'name'
         ];

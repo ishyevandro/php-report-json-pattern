@@ -11,7 +11,6 @@ class SpreadSheetConfig extends AbstractConfig
     {
         $this->expectedConfig = [
             'fields' => [],
-            'first_column' => '',
             'header_line_position' => ''
         ];
         $this->jsonPathPrefix = 'sheets.*.config.';
@@ -20,8 +19,8 @@ class SpreadSheetConfig extends AbstractConfig
             $this->config['fields'] = [];
         }
 
-        foreach ((array) $this->config['fields'] as $key => $value) {
-            $this->fields[] = new FieldConfig($this->config['fields'][$key]);
+        foreach ((array) $this->config['fields'] as &$value) {
+            $this->fields[] = new FieldConfig($value);
         }
     }
 
@@ -38,6 +37,11 @@ class SpreadSheetConfig extends AbstractConfig
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function getHeaderLinePosition(): int
+    {
+        return (int) $this->config['header_line_position'];
     }
 
     protected function validateFields(): bool

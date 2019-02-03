@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace IshyEvandro\XlsPatternGenerator\Configs;
 
 use IshyEvandro\XlsPatternGenerator\Interfaces\{
-    IFieldGetPosition,
+    IFieldGetColumn,
     IFieldGetRowKey
 };
 use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
 class FieldConfig extends AbstractConfig implements
-    IFieldGetPosition,
+    IFieldGetColumn,
     IFieldGetRowKey
 {
     public const ACCEPTABLE_TYPES = 'string|number';
@@ -20,7 +20,7 @@ class FieldConfig extends AbstractConfig implements
         $this->jsonPathPrefix = 'sheets.*.config.fields.*.';
         $this->expectedConfig = [
             'name' => '',
-            'position' => '',
+            'column' => '',
             'type' => self::ACCEPTABLE_TYPES,
             'json_row_key' => ''
         ];
@@ -48,9 +48,14 @@ class FieldConfig extends AbstractConfig implements
         return (string) $this->config['json_row_key'];
     }
 
-    public function getPosition(): string
+    public function getColumn(): string
     {
-        return (string) $this->config['position'];
+        return (string) $this->config['column'];
+    }
+
+    public function getFieldName(): string
+    {
+        return $this->config['name'];
     }
 
     protected function checkType(): bool

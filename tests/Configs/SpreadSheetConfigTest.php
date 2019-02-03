@@ -60,12 +60,11 @@ class SpreadSheetConfigTest extends TestCase
             'fields' => [
                 [
                     'name' => 'Test',
-                    'position' => 'A',
+                    'column' => 'A',
                     'type' => 'string',
                     'json_row_key' => 'name'
                 ]
             ],
-            'first_column' => 'A',
             'header_line_position' => 0
         ];
     }
