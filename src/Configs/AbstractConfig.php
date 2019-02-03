@@ -27,7 +27,7 @@ abstract class AbstractConfig implements IConfigValidate
      * spreadSheetConfig constructor.
      * @param array $data
      */
-    public function __construct(array $data)
+    public function __construct(array &$data)
     {
         $this->config = $data;
     }

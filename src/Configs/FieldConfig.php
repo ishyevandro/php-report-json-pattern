@@ -11,7 +11,7 @@ class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGet
 {
     public const ACCEPTABLE_TYPES = 'string|number';
 
-    public function __construct(array $data)
+    public function __construct(array &$data)
     {
         $this->jsonPathPrefix = 'sheets.*.config.fields.*.';
         $this->expectedConfig = [
