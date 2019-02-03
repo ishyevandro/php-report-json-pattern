@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace IshyEvandro\XlsPatternGenerator\Config;
+namespace IshyEvandro\XlsPatternGenerator\Configs;
 
 use IshyEvandro\XlsPatternGenerator\Interfaces\IConfigValidate;
+use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
 abstract class AbstractConfig implements IConfigValidate
 {
@@ -37,5 +38,24 @@ abstract class AbstractConfig implements IConfigValidate
     public function getMessage(): string
     {
         return $this->errorMessage;
+    }
+
+
+    /**
+     * @return bool
+     * @throws \IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException
+     */
+    protected function checkKeys(): bool
+    {
+        foreach ($this->expectedConfig as $config => $parameters) {
+            if (!\array_key_exists($config, $this->config)) {
+                $this->errorMessage = Messages::getMessage(Messages::CONFIG_MISSING_FIELD, [
+                    '{field}' => $this->jsonPathPrefix . $config
+                ]);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

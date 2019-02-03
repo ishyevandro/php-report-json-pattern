@@ -1,12 +1,12 @@
 <?php
 
-use IshyEvandro\XlsPatternGenerator\Configs\SpreadSheetConfig;
+use IshyEvandro\XlsPatternGenerator\Configs\FieldConfig;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class SpreadSheetConfigTest
  */
-class SpreadSheetConfigTest extends TestCase
+class FieldConfigTest extends TestCase
 {
     public function testValidateShouldReturnFalseWithMissingParameter(): void
     {
@@ -17,16 +17,17 @@ class SpreadSheetConfigTest extends TestCase
     public function testValidateShouldReturnTrueWithCorrectParameters(): void
     {
         $class = $this->getClass([
-            'fields' => [],
-            'first_column' => 'A',
-            'header_line_position' => 0
+            'name' => '',
+            'position' => 'A',
+            'type' => 0,
+            'json_row_key' => 'a'
         ]);
 
         $this->assertTrue($class->validate());
     }
 
-    protected function getClass($data): SpreadSheetConfig
+    protected function getClass($data): FieldConfig
     {
-        return new SpreadSheetConfig($data);
+        return new FieldConfig($data);
     }
 }
