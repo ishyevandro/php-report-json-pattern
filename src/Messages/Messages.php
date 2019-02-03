@@ -8,8 +8,10 @@ use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
 class Messages
 {
     public const CONFIG_MISSING_FIELD = 'cmf';
+    public const CONFIG_FIELD_TYPE_ERROR = 'cfte';
     public const MESSAGES = [
-        self::CONFIG_MISSING_FIELD => 'Missing config. {field}'
+        self::CONFIG_MISSING_FIELD => 'Missing config. {field}',
+        self::CONFIG_FIELD_TYPE_ERROR => 'Wrong field type. received {wrong}. Acceptables: {types}.'
     ];
 
     /**

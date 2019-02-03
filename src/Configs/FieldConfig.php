@@ -5,16 +5,19 @@ namespace IshyEvandro\XlsPatternGenerator\Configs;
 
 use IshyEvandro\XlsPatternGenerator\Interfaces\IFieldGetPosition;
 use IshyEvandro\XlsPatternGenerator\Interfaces\IFieldGetRowKey;
+use IshyEvandro\XlsPatternGenerator\Messages\Messages;
 
 class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGetRowKey
 {
+    public const ACCEPTABLE_TYPES = 'string|number';
+
     public function __construct(array $data)
     {
         $this->jsonPathPrefix = 'sheets.*.config.fields.*.';
         $this->expectedConfig = [
             'name' => '',
             'position' => '',
-            'type' => '',
+            'type' => self::ACCEPTABLE_TYPES,
             'json_row_key' => ''
         ];
         parent::__construct($data);
@@ -22,7 +25,15 @@ class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGet
 
     public function validate(): bool
     {
-        return $this->checkKeys();
+        if ($this->checkKeys() === false) {
+            return false;
+        }
+
+        if ($this->checkType() === false) {
+            return false;
+        }
+
+        return true;
     }
 
     public function getRowKey(): string
@@ -33,5 +44,22 @@ class FieldConfig extends AbstractConfig implements IFieldGetPosition, IFieldGet
     public function getPosition(): string
     {
         return (string) $this->config['position'];
+    }
+
+    protected function checkType(): bool
+    {
+        $expected = explode('|', $this->expectedConfig['type']);
+        if (\in_array($this->config['type'], $expected, true) === false) {
+            $this->errorMessage = Messages::getMessage(
+                Messages::CONFIG_FIELD_TYPE_ERROR,
+                [
+                    '{wrong}' => $this->config['type'],
+                    '{types}' => self::ACCEPTABLE_TYPES
+                ]
+            );
+            return false;
+        }
+
+        return true;
     }
 }
