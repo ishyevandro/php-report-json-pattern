@@ -9,9 +9,11 @@ class Messages
 {
     public const CONFIG_MISSING_FIELD = 'cmf';
     public const CONFIG_FIELD_TYPE_ERROR = 'cfte';
+    public const FIELD_NOT_FOUND = 'fnf';
     public const MESSAGES = [
         self::CONFIG_MISSING_FIELD => 'Missing config. {field}',
-        self::CONFIG_FIELD_TYPE_ERROR => 'Wrong field type. received {wrong}. Acceptables: {types}.'
+        self::CONFIG_FIELD_TYPE_ERROR => 'Wrong field type. received {wrong}. Acceptables: {types}.',
+        self::FIELD_NOT_FOUND => 'In row {line}. property "{prop}" from FieldConfiguration not found in row.'
     ];
 
     /**

@@ -10,6 +10,8 @@ class SpreadSheetConfig extends AbstractConfig
     public function __construct(array &$data)
     {
         $this->expectedConfig = [
+            'name' => '',
+            'worksheet_position' => '',
             'fields' => [],
             'header_line_position' => ''
         ];
@@ -42,6 +44,16 @@ class SpreadSheetConfig extends AbstractConfig
     public function getHeaderLinePosition(): int
     {
         return (int) $this->config['header_line_position'];
+    }
+
+    public function getName(): string
+    {
+        return (string) $this->config['name'];
+    }
+
+    public function getWorksheetPosition(): int
+    {
+        return (int) $this->config['worksheet_position'];
     }
 
     protected function validateFields(): bool

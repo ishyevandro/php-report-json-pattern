@@ -49,6 +49,19 @@ class SpreadSheetConfigTest extends TestCase
         ]), $class->getErrorMessage());
     }
 
+    public function testGetName(): void
+    {
+        $class = $this->getClass($this->getPayload());
+        $this->assertEquals('First worksheet', $class->getName());
+    }
+
+
+    public function testGetWorksheetPosition(): void
+    {
+        $class = $this->getClass($this->getPayload());
+        $this->assertEquals(1, $class->getWorksheetPosition());
+    }
+
     protected function getClass($data): SpreadSheetConfig
     {
         return new SpreadSheetConfig($data);
@@ -57,6 +70,7 @@ class SpreadSheetConfigTest extends TestCase
     protected function getPayload(): array
     {
         return [
+            'name' => 'First worksheet',
             'fields' => [
                 [
                     'name' => 'Test',
@@ -65,7 +79,8 @@ class SpreadSheetConfigTest extends TestCase
                     'json_row_key' => 'name'
                 ]
             ],
-            'header_line_position' => 0
+            'header_line_position' => 1,
+            'worksheet_position' => 1
         ];
     }
 }
