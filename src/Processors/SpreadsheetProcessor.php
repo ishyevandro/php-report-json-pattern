@@ -2,161 +2,173 @@
 
 namespace IshyEvandro\XlsPatternGenerator\Processors;
 
+use IshyEvandro\XlsPatternGenerator\Configs\FieldConfig;
+use IshyEvandro\XlsPatternGenerator\Configs\SpreadSheetConfig;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
+use IshyEvandro\XlsPatternGenerator\Interfaces\{
+    ICheckKeys,
+    IErrorMessage
+};
+use IshyEvandro\XlsPatternGenerator\Messages\Messages;
+use IshyEvandro\XlsPatternGenerator\Traits\{
+    CheckKeysTrait,
+    ErrorMessageTrait
+};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
- * Class WorksheetConfig
+ * Class WorksheetConfigWIP
  * @package IshyEvandro\XlsPatternGenerator\Configs
  */
-class WorksheetProcessor
+class SpreadsheetProcessor implements IErrorMessage, ICheckKeys
 {
-    protected $expectConfigFields = [
-        "fields",
-        "header_line",
-        "first_column"
-    ];
-    /**
-     * @var array
-     */
-    protected $config;
+    use ErrorMessageTrait, CheckKeysTrait;
 
     /**
      * @var Worksheet
      */
     protected $worksheet;
 
-    protected $column = null;
+    protected $column;
     protected $line = 0;
+    protected $spreadsheetData = [];
     /**
-     * WorksheetProcessor constructor.
-     * @param array $config
-     * @throws XlsPatternGeneratorException
+     * @var SpreadSheetConfig
      */
-    public function __construct(array $config)
+    protected $config;
+
+    protected $expectedFields = [
+        'config' => [],
+        'data' => []
+    ];
+
+    protected $jsonPathPrefix = 'sheets.*.';
+
+    /**
+     * SpreadsheetProcessor constructor.
+     * @param array $spreadsheetData
+     */
+    public function __construct(array &$spreadsheetData)
     {
-        $this->config = $config;
+        $this->spreadsheetData = $spreadsheetData;
         $this->setConfig();
     }
 
-    public function process(Worksheet $worksheet, &$sheetInfo): bool
+    public function validate(): bool
+    {
+        $return = true;
+        if ($this->checkKeys($this->expectedFields, $this->spreadsheetData, $this->jsonPathPrefix)) {
+            $this->setErrorMessage($this->getKeyError());
+            $return = false;
+        }
+
+        if ($return === true && $this->config->validate() === false) {
+            $this->setErrorMessage($this->config->getErrorMessage());
+        }
+
+        return true;
+    }
+
+    public function setWorksheet(Worksheet $worksheet): self
     {
         $this->worksheet = $worksheet;
-        $this->setHeader()
-            ->processData($sheetInfo);
-        return true;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function setHeader()
-    {
-        $this->setFirstColumn();
-        $this->setFirstLine();
-        foreach ($this->config['fields'] as $field) {
-            $this->setCellValue($field)
-                ->nextColumn();
-        }
-
-        $this->nextLine();
-        return $this;
-    }
-
-    protected function processData(&$sheetInfo)
-    {
-        foreach ($sheetInfo["data"] as $row) {
-            $this->processOneRow($row);
-        }
-    }
-
-    protected function processOneRow(&$row): bool
-    {
-        $this->setFirstColumn();
-        foreach ($row as $value) {
-            $this->setCellValue($value)
-                ->nextColumn();
-        }
-
-        $this->nextLine();
-        return true;
-    }
-
-    /**
-     * @param $value
-     * @return WorksheetProcessor
-     */
-    protected function setCellValue(&$value): self
-    {
-        $this->worksheet->setCellValue($this->column.$this->line, $value);
         return $this;
     }
 
     /**
-     * @return bool
-     * @throws XlsPatternGeneratorException
+     * @return SpreadsheetProcessor
      */
-    protected function setConfig(): bool
+    public function setFirstLine(): self
     {
-        foreach ($this->expectConfigFields as $field) {
-            $this->checkField($field);
-        }
-        $this->setFirstColumn()
-            ->setFirstLine();
-        return true;
-    }
-
-    /**
-     * @param $field
-     * @return bool
-     * @throws XlsPatternGeneratorException
-     */
-    protected function checkField($field): bool
-    {
-        if (!array_key_exists($field, $this->config)) {
-            throw new XlsPatternGeneratorException(
-                "key [$field] not exist in sheet configuration"
-            );
-        }
-
-        return true;
-    }
-
-    /**
-     * @return WorksheetProcessor
-     */
-    protected function setFirstColumn(): self
-    {
-        $this->column = $this->config['first_column'];
-        return $this;
-    }
-
-    /**
-     * @return WorksheetProcessor
-     */
-    protected function setFirstLine(): self
-    {
-        $this->line = ($this->config['header_line']*1);
+        $this->line = $this->config->getHeaderLinePosition();
         $this->line = $this->line > 0 ? $this->line : 1;
         return $this;
     }
 
     /**
-     * @return WorksheetProcessor
+     * @return $this
      */
-    protected function nextColumn(): self
+    public function setHeader(): self
     {
-        if ($this->column == 'Z') {
-            $this->column = $this->column. "A";
-            return $this;
+        /**
+         * @var $field FieldConfig
+         */
+        foreach ($this->config->getFields() as $field) {
+            $this->setCellValue($field->getColumn(), $field->getFieldName());
         }
 
-        $this->column++;
+        $this->nextLine();
         return $this;
     }
 
     /**
-     * @return WorksheetProcessor
+     * @return bool
+     */
+    public function process(): bool
+    {
+        $this->processData();
+        return true;
+    }
+
+    protected function processData(): void
+    {
+        $fields = $this->config->getFields();
+        foreach ((array) $this->spreadsheetData['data'] as &$row) {
+            $this->processOneRow($fields, $row);
+        }
+    }
+
+    /**
+     * @param array $fields
+     * @param array $row
+     * @return bool
+     * @throws XlsPatternGeneratorException
+     */
+    protected function processOneRow(array &$fields, array &$row): bool
+    {
+        /**
+         * @var $field FieldConfig
+         */
+        foreach ($fields as $field) {
+            try {
+                $value = $row[$field->getRowKey()];
+            } catch (\Exception $e) {
+                throw new XlsPatternGeneratorException(
+                    Messages::getMessage(
+                        Messages::FIELD_NOT_FOUND,
+                        [
+                            '{line}' => $this->line,
+                            '{prop}' => $field->getRowKey()
+                        ]
+                    )
+                );
+            }
+
+            $this->setCellValue($field->getColumn(), $value);
+        }
+
+        $this->nextLine();
+        return true;
+    }
+
+    /**
+     * @param $column
+     * @param $value
+     * @return SpreadsheetProcessor
+     */
+    protected function setCellValue($column, $value): self
+    {
+        $this->worksheet->setCellValue($column.$this->line, $value);
+        return $this;
+    }
+
+    protected function setConfig(): void
+    {
+        $this->config = new SpreadSheetConfig($this->spreadsheetData['config']);
+    }
+
+    /**
+     * @return SpreadsheetProcessor
      */
     protected function nextLine(): self
     {

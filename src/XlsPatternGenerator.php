@@ -2,14 +2,20 @@
 
 namespace IshyEvandro\XlsPatternGenerator;
 
-use IshyEvandro\XlsPatternGenerator\Processors\WorksheetProcessor;
+use IshyEvandro\XlsPatternGenerator\Configs\SpreadSheetConfig;
+use IshyEvandro\XlsPatternGenerator\Interfaces\IErrorMessage;
+use IshyEvandro\XlsPatternGenerator\Processors\SpreadsheetProcessor;
 use IshyEvandro\XlsPatternGenerator\Exceptions\XlsPatternGeneratorException;
+use IshyEvandro\XlsPatternGenerator\Traits\ErrorMessageTrait;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use Exception;
 
-class XlsPatternGenerator
+class XlsPatternGenerator implements IErrorMessage
 {
+    use ErrorMessageTrait;
+
     /**
      * @var Spreadsheet
      */
@@ -21,9 +27,11 @@ class XlsPatternGenerator
     protected $currentSheet;
 
     /**
-     * @var WorksheetProcessor
+     * @var SpreadsheetProcessor
      */
     protected $currentWorksheetConfig;
+
+    protected $withHeader = true;
 
     /**
      * XlsPatternGenerator constructor.
@@ -39,11 +47,10 @@ class XlsPatternGenerator
      * @return bool
      * @throws XlsPatternGeneratorException
      */
-    public function process(): bool
+    public function process($withHeader = true): bool
     {
-        $this->spreedSheetConfig();
-        $this->processSheets();
-        return true;
+        $this->withHeader = $withHeader;
+        return $this->processSheets();
     }
 
     public function save($path)
@@ -53,29 +60,23 @@ class XlsPatternGenerator
     }
 
     /**
-     * Reserved
-     *
-     * @return XlsPatternGenerator
-     */
-    protected function spreedSheetConfig(): self
-    {
-        return $this;
-    }
-
-    /**
      * @throws XlsPatternGeneratorException
      */
     protected function processSheets(): bool
     {
-        foreach ($this->json["sheets"] as $key => $sheet) {
-            $myWorkSheet = new Worksheet($this->spreedsheet, $sheet['name']);
+        /**
+         * @var $sheet SpreadSheetConfig
+         */
+        foreach ($this->json['sheets'] as $key => &$sheet) {
+            $myWorkSheet = new Worksheet($this->spreedsheet);
             try {
                 $this->currentSheet = $this->spreedsheet->addSheet($myWorkSheet, $key);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new XlsPatternGeneratorException($e->getMessage(), $e->getCode(), $e);
             }
+
             $this->configCurrentSheet($sheet)
-                ->processWorkSheet($sheet);
+                ->processWorkSheet();
         }
 
         return true;
@@ -84,18 +85,21 @@ class XlsPatternGenerator
     /**
      * @param $sheet
      * @return XlsPatternGenerator
+     * @throws XlsPatternGeneratorException
      */
     protected function configCurrentSheet(&$sheet): self
     {
-        $this->currentWorksheetConfig = new WorksheetProcessor($sheet["config"]);
+        $this->currentWorksheetConfig = new SpreadsheetProcessor($sheet);
         return $this;
     }
 
-    protected function processWorkSheet(&$sheet)
+    protected function processWorkSheet(): bool
     {
-        return $this->currentWorksheetConfig->process(
-            $this->currentSheet,
-            $sheet
-        );
+        $this->currentWorksheetConfig->setWorksheet($this->currentSheet)
+            ->setFirstLine();
+        if ($this->withHeader === true) {
+            $this->currentWorksheetConfig->setHeader();
+        }
+        return $this->currentWorksheetConfig->process();
     }
 }
